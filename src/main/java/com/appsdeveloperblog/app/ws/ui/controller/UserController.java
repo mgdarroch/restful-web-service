@@ -1,6 +1,9 @@
 package com.appsdeveloperblog.app.ws.ui.controller;
 
 
+import com.appsdeveloperblog.app.ws.ui.model.request.UserDetailsRequestModel;
+import com.appsdeveloperblog.app.ws.ui.model.response.UserRest;
+import org.apache.catalina.User;
 import org.springframework.web.bind.annotation.*;
 
 // Very simple REST service with CRUD operations, GET POST PUT and DELETE
@@ -15,8 +18,8 @@ public class UserController {
     }
 
     @PostMapping
-    public String createUser(){
-        return "create user was called";
+    public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails){
+        return null;
     }
 
     @PutMapping
