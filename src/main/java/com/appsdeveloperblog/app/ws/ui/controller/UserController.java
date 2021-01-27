@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("users") // http://localhost:8080/users
 public class UserController {
 
-    @Autowired
     UserService userService;
 
-
+    // Constructors are Autowired by default.
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping
     public String getUser(){
@@ -35,11 +37,9 @@ public class UserController {
         BeanUtils.copyProperties(userDetails, userDto);
 
         UserDto createdUser = userService.createUser(userDto);
-//        BeanUtils.copyProperties(createdUser, returnValue);
+        BeanUtils.copyProperties(createdUser, returnValue);
 
-//        return returnValue;
-
-        return null;
+        return returnValue;
     }
 
     @PutMapping
