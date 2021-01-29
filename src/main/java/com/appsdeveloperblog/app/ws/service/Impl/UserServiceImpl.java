@@ -7,18 +7,27 @@ import com.appsdeveloperblog.app.ws.shared.Utils;
 import com.appsdeveloperblog.app.ws.shared.dto.UserDto;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     UserRepository userRepository;
     Utils utils;
+    BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
     // Constructor Injection which is Autowired automatically.
-    public UserServiceImpl(UserRepository userRepository, Utils utils) {
+    public UserServiceImpl(UserRepository userRepository, Utils utils, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.utils = utils;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -32,7 +41,7 @@ public class UserServiceImpl implements UserService {
 
         String publicUserId = utils.generateUserId(30);
         userEntity.setUserId(publicUserId);
-        userEntity.setEncryptedPassword("test");
+        userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
 
         UserEntity storedUserDetails = userRepository.save(userEntity);
 
@@ -40,6 +49,18 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(storedUserDetails, returnValue);
 
         return returnValue;
+    }
+
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        UserEntity userEntity = userRepository.findUserByEmail(email);
+
+        if(userEntity == null){
+            throw new UsernameNotFoundException(email);
+        }
+
+        return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
     }
 
 
