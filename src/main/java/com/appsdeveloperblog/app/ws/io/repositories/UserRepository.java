@@ -9,4 +9,7 @@ public interface UserRepository extends CrudRepository<UserEntity, Long> {
 
     UserEntity findUserByEmail(String email);
 
+    //Query methods.  find tells JPA that this is a query method.  The 'ByUserId' tells the query method to search for a specific userId.
+    // Ensure that the database has a user_id property.
+    UserEntity findByUserId(String id);
 }
